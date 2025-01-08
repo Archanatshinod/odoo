@@ -1,0 +1,22 @@
+<odoo>
+    <!-- Root Level Menu -->
+    <menuitem id="root_level" name="Real Estate"/>
+<!--      <menuitem id="root_level" name="Real Estate" sequence="1"/>-->
+
+    <!-- Second Level Menus -->
+    <menuitem id="second_level_1" name="Advertisements" parent="root_level" sequence="10">
+        <menuitem id="third_level_1" name="Properties" action="estate_property_action" sequence="10"/>
+    </menuitem>
+
+<!--    <menuitem id="second_level_2" name="Offers" action="estate_property_offer_action" parent="root_level" sequence="20"/>-->
+
+    <!-- Settings Menu -->
+    <menuitem id="estate_property_settings" name="Settings" parent="root_level" sequence="30">
+        <menuitem id="estate_type_menu_action" name="Types" action="estate_property_type_action"/>
+        <menuitem id="estate_tag_menu_action" name="Tags" action="estate_property_tag_action"/>
+    </menuitem>
+
+    <!-- Restricted Menu -->
+    <menuitem id="restricted_menu" name="Restricted Menu" parent="root_level" sequence="40" groups="base.group_erp_manager"/>
+</odoo>
+
