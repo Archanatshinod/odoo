@@ -1,0 +1,195 @@
+<!--<odoo>-->
+<!--&lt;!&ndash;    basic view  &ndash;&gt;-->
+<!--    <record id="research_record" model="ir.actions.act_window">-->
+<!--        <field name="name">Research Projects</field>-->
+<!--        <field name="res_model">research.project</field>-->
+<!--        <field name="view_mode">list,form</field>-->
+<!--    </record>-->
+<!--&lt;!&ndash;    list view  &ndash;&gt;-->
+<!--    <record id="research_project_list_view" model="ir.ui.view">-->
+<!--        <field name="name">research.project.list.view</field>-->
+<!--        <field name="model">research.project</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <list create="true">-->
+<!--                <field name="name" width="50%"/>-->
+<!--                <field name="start_date" width="15%"/>-->
+<!--                <field name="duration" width="10%"/>-->
+<!--            </list>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--     &lt;!&ndash; Action for Estate Properties &ndash;&gt;-->
+<!--    <record id="estate_property_action" model="ir.actions.act_window">-->
+<!--        <field name="name">Research Projects</field>-->
+<!--        <field name="res_model">research.project</field>-->
+<!--        <field name="view_mode">list</field>-->
+<!--    </record>-->
+
+
+<!--&lt;!&ndash;       form view of project &ndash;&gt;-->
+<!--    <record id="research_project_form_view" model="ir.ui.view">-->
+<!--        <field name="name">research.project.form</field>-->
+<!--        <field name="model">research.project</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="Research project">-->
+<!--                <header>-->
+
+<!--                    <field name="status" widget="statusbar" position="right" statusbar_visible="new,in_progress,completed,cancelled"/>-->
+<!--                </header>-->
+<!--                <sheet>-->
+<!--                    &lt;!&ndash; Title &ndash;&gt;-->
+<!--                    <div class="oe_title">-->
+<!--                        <h1>-->
+<!--                            <field name="name"/>-->
+<!--                        </h1>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Main Group &ndash;&gt;-->
+<!--                    <group>-->
+<!--                        <group>-->
+<!--                            <field name="start_date"/>-->
+<!--                            <field name="end_date"/>-->
+<!--                            <field name="duration"/>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <field name="project_summary"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+<!--                    <group>-->
+<!--                            <field name="researcher_ids" widget="many2many_researcher"/>-->
+<!--                    </group>-->
+<!--                </sheet>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    &lt;!&ndash; Action to Open Form View &ndash;&gt;-->
+<!--    <record id="action_research_project" model="ir.actions.act_window">-->
+<!--        <field name="name">Research Project</field>-->
+<!--        <field name="res_model">research.project</field>-->
+<!--        <field name="view_mode">form</field>-->
+<!--        <field name="view_id" ref="research_project_form_view"/>-->
+<!--        <field name="target">current</field>-->
+<!--    </record>-->
+<!--</odoo>-->
+
+
+<odoo>
+    ------------------------------------------------------------------------------------------
+
+   <record id="research_project_search_view" model="ir.ui.view">
+    <field name="name">research.project.view.search</field>
+    <field name="model">research.project</field>
+    <field name="arch" type="xml">
+        <search>
+            <!-- Searchable Fields -->
+            <field name="name" string="Project Name" filter_domain="[('name', 'ilike', self)]"/>
+            <field name="researcher_ids" string="Researcher" />
+            <field name="start_date" string="Start Date" />
+            <field name="status" string="Status" />
+
+
+            <!-- Separator for a filter section heading -->
+            <separator string="Filter by Status"/>
+
+            <group string="Status">
+                <filter name="active_projects" string="Active Projects" domain="[('status', 'in', ['draft', 'in_progress'])]" />
+<!--                <filter name="Draft" string="Draft" domain="[('status', '=', 'draft')]"/>-->
+<!--                <filter name="In Progress" string="In Progress" domain="[('status', '=', 'in_progress')]"/>-->
+
+
+            </group>
+        </search>
+    </field>
+</record>
+
+
+    ------------------------------------------------------------------------------------
+
+    <!-- Action for Research Projects -->
+    <record id="research_project_action" model="ir.actions.act_window">
+        <field name="name">Research Projects</field>
+        <field name="res_model">research.project</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- List View for Research Projects -->
+    <record id="research_project_list_view" model="ir.ui.view">
+        <field name="name">research.project.list.view</field>
+        <field name="model">research.project</field>
+        <field name="arch" type="xml">
+            <list string="Research Projects">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="duration"/>
+                 <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View for Research Projects -->
+    <record id="research_project_form_view" model="ir.ui.view">
+        <field name="name">research.project.form.view</field>
+        <field name="model">research.project</field>
+        <field name="arch" type="xml">
+            <form string="Research Project">
+                <header>
+
+                        <button name="action_in_progress" string="In progress" type="object" class="oe_highlight"/>
+                        <button name="action_completed" string="Completed" type="object" class="oe_highlight"/>
+                        <button name="action_cancel" string="Cancel" type="object"/>
+                        <field name="status" widget="statusbar" statusbar_visible="draft,in_progress,completed,cancelled"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="duration" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="project_summary"/>
+                            <field name="status" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="researcher_ids" widget="many2many_tags"/>
+                    </group>
+                    <notebook>
+                        <page string="Logs">
+                            <field name="log_ids">
+                                <list>
+                                    <field name="timestamp"/>
+                                    <field name="change_summary_status" string="Change Summary"/>
+                                    <field name="change_summary_assign" string="Change Summary"/>
+                                </list>
+                            </field>
+                        </page>
+
+<!--                        <page string="Researchers">-->
+<!--                            <field name="researcher_ids">-->
+<!--                                <list>-->
+<!--                                    <field name="name"/>-->
+<!--                                    &lt;!&ndash; You can add more fields like specialization, etc. &ndash;&gt;-->
+<!--                                </list>-->
+<!--                            </field>-->
+<!--                        </page>-->
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Researchers -->
+    <record id="researcher_action" model="ir.actions.act_window">
+        <field name="name">Researchers</field>
+        <field name="res_model">research.researcher</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,39 @@
+<odoo>
+    <!-- Researcher Model List View -->
+    <record id="researcher_list_view" model="ir.ui.view">
+        <field name="name">research.researcher.list.view</field>
+        <field name="model">research.researcher</field>
+        <field name="arch" type="xml">
+            <tree string="Researchers">
+                <field name="name"/>
+                <field name="image" widget="image" class="img img-fluid" />
+                <field name="email"/>
+                <!-- Add other relevant fields here -->
+            </tree>
+        </field>
+    </record>
+
+    <!-- Researcher Model Form View -->
+    <record id="researcher_form_view" model="ir.ui.view">
+        <field name="name">research.researcher.form.view</field>
+        <field name="model">research.researcher</field>
+        <field name="arch" type="xml">
+            <form string="Researcher">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="image" widget="image" class="oe_avatar square_image"/>
+                        <field name="email"/>
+                        <!-- Add other relevant fields here -->
+                    </group>
+                    <notebook>
+                        <page string="Projects">
+                            <field name="project_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
