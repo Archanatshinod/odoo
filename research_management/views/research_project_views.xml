@@ -1,0 +1,99 @@
+<!--Research Project Views -->
+<odoo>
+    <!-- Search view for list view -->
+       <record id="research_project_search_view" model="ir.ui.view">
+            <field name="name">research.project.view.search</field>
+            <field name="model">research.project</field>
+            <field name="arch" type="xml">
+                <search>
+                    <!-- Searchable fields -->
+                    <field name="name" string="Project Name"/>
+                    <field name="researcher_ids" string="Researcher"/>
+                    <field name="start_date" string="Start Date"/>
+                    <field name="status" string="Status"/>
+
+                    <separator string="Filter by Status"/>
+
+                    <group string="Status">
+                        <!-- Filter for Active Projects (Draft and In Progress) -->
+                        <filter name="active_projects" string="Active Projects" domain="[('status', 'in', ['draft', 'in_progress'])]" />
+                    </group>
+                </search>
+            </field>
+       </record>
+
+    <!-- Action for Research Projects  list view -->
+    <record id="research_project_action" model="ir.actions.act_window">
+        <field name="name">Research Projects</field>
+        <field name="res_model">research.project</field>
+
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active_projects': 1}</field>
+    </record>
+
+    <!-- List View for Research Projects -->
+    <record id="research_project_list_view" model="ir.ui.view">
+        <field name="name">research.project.list.view</field>
+        <field name="model">research.project</field>
+        <field name="arch" type="xml">
+            <list string="Research Projects">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="duration"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View for Research Projects -->
+    <record id="research_project_form_view" model="ir.ui.view">
+        <field name="name">research.project.form.view</field>
+        <field name="model">research.project</field>
+        <field name="arch" type="xml">
+            <form string="Research Project">
+                <header>
+                    <button name="action_in_progress" string="In progress" type="object" class="oe_highlight" invisible="status in ['in_progress', 'completed', 'cancelled']"/>
+                    <button name="action_completed" string="Completed" type="object" class="oe_highlight" invisible="status in ['completed','cancelled']"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="status in ['cancelled', 'completed']"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,in_progress,completed,cancelled"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Enter Project Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date" readonly="status in ['completed']"/>
+                            <field name="duration" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="project_summary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="researcher_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+                <!-- Chatter Section for displaying messages -->
+                <chatter>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </chatter>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Researchers view -->
+    <record id="researcher_action" model="ir.actions.act_window">
+        <field name="name">Researchers</field>
+        <field name="res_model">research.researcher</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

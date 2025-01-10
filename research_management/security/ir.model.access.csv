@@ -1,0 +1,3 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_research_project,access.research.project,model_research_project,base.group_user,1,1,1,1
+access_research_researcher,access.research.researcher,model_research_researcher,base.group_user,1,1,1,1
