@@ -1,0 +1,10 @@
+<!--Research Management menus-->
+<odoo>
+    <data>
+        <menuitem id="root_level" name="Research Management" sequence="1" />
+        <!-- Projects menu -->
+        <menuitem id="second_level_1" name="Projects" parent="root_level" sequence="10" action="research_management.research_project_action" />
+        <!-- Researchers menu -->
+        <menuitem id="second_level_2" name="Researchers" parent="root_level" sequence="20" action="researcher_action" />
+    </data>
+</odoo>
