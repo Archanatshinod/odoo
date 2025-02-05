@@ -1,0 +1,20 @@
+<odoo>
+    <data>
+        <!-- Inherit the Sale Order Form View -->
+        <record id="sale_order_view_inherit_rfq_button" model="ir.ui.view">
+            <field name="name">sale.order.form.rfq.button</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="action_view_rfqs"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-shopping-cart">
+                        <field name="rfq_count" widget="statinfo" string="RFQs"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

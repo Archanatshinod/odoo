@@ -1,0 +1,16 @@
+<odoo>
+   <record id="view_purchase_order_form_inherit" model="ir.ui.view">
+    <field name="name">purchase.order.form.inherit</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.view_purchase_order"/>
+    <field name="arch" type="xml">
+        <xpath expr="//group[@name='purchase_order_info']" position="after">
+            <group>
+                <field name="sale_order_id"/>
+            </group>
+        </xpath>
+    </field>
+</record>
+
+
+</odoo>
