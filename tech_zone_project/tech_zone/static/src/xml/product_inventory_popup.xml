@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="tech_zone.ProductInventoryPopup" owl="1">
+        <Dialog>
+            <header>
+                <h3><t t-esc="props.title"/></h3>
+            </header>
+            <main>
+                <p><t t-esc="props.message"/></p>
+
+                <p>Selected: <t t-esc="state.selectedStockType"/></p>
+
+                <!-- Selection Buttons -->
+                <div class="d-flex gap-2">
+                    <!-- Online Button -->
+                    <t t-if="props.product.stock_online > 0">
+                    <button
+                        t-att-style="state.selectedStockType === 'online'
+                            ? 'border: 2px solid #008080; background-color: #e6f7f7; padding: 10px 20px; border-radius: 5px; cursor: pointer;'
+                            : 'border: 1px solid #ccc; background-color: #f8f8f8; padding: 10px 20px; border-radius: 5px; cursor: pointer;'"
+                        t-on-click="() => state.selectedStockType = state.selectedStockType === 'online' ? null : 'online'">
+                        Online
+                    </button></t>
+
+                    <!-- Offline Button -->
+                    <t t-if="props.product.stock_offline > 0">
+                    <button
+                        t-att-style="state.selectedStockType === 'offline'
+                            ? 'border: 2px solid #008080; background-color: #e6f7f7; padding: 10px 20px; border-radius: 5px; cursor: pointer;'
+                            : 'border: 1px solid #ccc; background-color: #f8f8f8; padding: 10px 20px; border-radius: 5px; cursor: pointer;'"
+                        t-on-click="() => state.selectedStockType = state.selectedStockType === 'offline' ? null : 'offline'">
+                        Offline
+                    </button>
+                    </t>
+                </div>
+
+            </main>
+        </Dialog>
+    </t>
+</templates>

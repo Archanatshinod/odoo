@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-name="tech_zone.ProductCard" t-inherit="point_of_sale.ProductCard" t-inherit-mode="extension" owl="1">
+        <xpath expr="//article" position="inside">
+
+            <t t-if="props.product.stock_online &lt;= 0 or props.product.stock_offline &lt;= 0">
+                <div style="position: absolute;
+                    top: 5px;
+                    left: 5px;
+                    background: red;
+                    color: white;
+                    padding: 3px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    z-index: 10;
+                    border-radius: 3px;">
+                    Out of stock
+                    <div>
+                    <t t-if="props.product.stock_online &lt;= 0 and props.product.stock_offline &gt; 0">: in online</t>
+                    <t t-if="props.product.stock_offline &lt;= 0 and props.product.stock_online &gt; 0">: in offline</t>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </t>
+</templates>
