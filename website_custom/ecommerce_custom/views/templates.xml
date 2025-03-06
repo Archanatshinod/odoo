@@ -1,0 +1,68 @@
+<odoo>
+    <template id="ecommerce_custom_product" inherit_id="website_sale.product" name="Custom Product Template">
+        <xpath expr="//a[@id='add_to_cart']" position="replace">
+<!--            <t t-if="product.product_variant_id.stock_online > 0">-->
+                 <a data-animation-selector=".o_wsale_product_images" role="button" id="shop_offline"
+                   t-attf-class="btn btn-success js_check_product a-submit flex-grow-1 me-2"
+                   t-att-style="product.product_variant_id.stock_online == 0 and 'pointer-events: none; opacity: 0.5; filter: blur(1px);' or ''"
+                   t-att-aria-disabled="product.product_variant_id.stock_online == 0">
+                    <i class="fa fa-shopping-cart me-2"/>
+                    Shop from online
+                </a>
+<!--            </t>-->
+        </xpath>
+        <xpath expr="//div[@id='add_to_cart_wrap']" position="inside">
+<!--            <t t-if="product.product_variant_id.stock_offline > 0">-->
+               <a data-animation-selector=".o_wsale_product_images" role="button" id="shop_offline"
+                   t-attf-class="btn btn-info js_check_product a-submit flex-grow-1 me-2"
+                   t-att-style="product.product_variant_id.stock_offline == 0 and 'pointer-events: none; opacity: 0.5; filter: blur(1px);' or ''"
+                   t-att-aria-disabled="product.product_variant_id.stock_offline == 0">
+                    <i class="fa fa-shopping-cart me-2"/>
+                    Shop from offline
+                </a>
+
+<!--            </t>-->
+        </xpath>
+    </template>
+     <template id="ecommerce_custom_filter" inherit_id="website_sale.filter_products_price" name="Custom Product Template">
+         <xpath expr="//div[@id='o_wsale_price_range_option']" position="inside">
+              <t t-if="is_sidebar_collapsible">
+                <div class="accordion-item">
+                    <h6 class="accordion-header">
+<!--                        <button-->
+<!--                            class="accordion-button px-0 bg-transparent shadow-none"-->
+<!--                            type="button"-->
+<!--                            data-bs-toggle="collapse"-->
+<!--                            t-attf-data-bs-target="#o_wsale_price_range_option_inner"-->
+<!--                            t-attf-aria-controls="o_wsale_price_range_option_inner"-->
+<!--                            aria-expanded="true"-->
+<!--                        >-->
+<!--                            <b>Price Range</b>-->
+<!--                        </button>-->
+                         <button
+                            class="accordion-button px-0 bg-transparent shadow-none"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            aria-expanded="true"
+                        >
+                            <b> inventory option</b>
+                        </button>
+                    </h6>
+                    <div
+                        id="o_wsale_inventory_option_inner"
+                        class="accordion-collapse collapse show"
+                    >
+                        <input
+                            type="range"
+                            multiple="multiple"
+                            t-attf-class="form-range range-with-input {{_classes_input}}"
+                            t-att-data-currency="website.currency_id.symbol"
+                            t-att-data-currency-position="website.currency_id.position"
+
+                        />
+                    </div>
+                </div>
+            </t>
+         </xpath>
+     </template>
+</odoo>
