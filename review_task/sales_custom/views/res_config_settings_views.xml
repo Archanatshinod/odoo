@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form_custom" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.sale.management.custom</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+             <xpath expr="//setting[@id='email_template']" position="after">
+             <setting id="service_product" string="Service Product" help="select a service product">
+
+                  <field name="service_product"/>
+                        </setting>
+<!--                  <setting id="service_charge" string="Service charge" help="Enable service charge">-->
+<!--                  <field name="service_charge"/>-->
+<!--                        </setting>-->
+
+             </xpath>
+        </field>
+
+        </record>
+    </data>
+</odoo>
