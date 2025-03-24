@@ -1,0 +1,32 @@
+ <odoo>
+     <record id="sale_order_form_order_approval" model="ir.ui.view">
+            <field name="name">sale.order.form.order.approval</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='action_preview_sale_order']" position="after">
+                    <button name="button_approve" string="Approval" type="object" invisible="hide_approve_button"/>
+                </xpath>
+<!--                <xpath expr="//button[@name='action_confirm']" position="attributes">-->
+<!--                    <attribute name="invisible">state != 'approved'</attribute>-->
+<!--                </xpath>-->
+
+                <xpath expr="//header/field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">draft,to_approve,approved,sent,sale,cancel</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='customer_signature']" position="after">
+                    <page name="approvals" string="Approvals">
+                        <field name="approver_validate_ids">
+                            <list string="Approvers" editable="bottom">
+                                    <field name="approver_id" widget='many2one_avatar_user'/>
+                                    <field name="is_validated"/>
+                                </list>
+                        </field>
+
+                    </page>
+                </xpath>
+            </field>
+     </record>
+ </odoo>

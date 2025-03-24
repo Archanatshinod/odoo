@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sales_approval=_approvals,sale_order_approval.sale_order_approvals,model_sale_order_approvals,base.group_user,1,1,1,1
+access_sale_order_approvers,sale_order_approval.sale_order_approvers,model_sale_order_approvers,base.group_user,1,1,1,1
+access_sale_approval_validate,sale_order_approval.sale_approval_validate,model_sale_approval_validate,base.group_user,1,1,1,1
