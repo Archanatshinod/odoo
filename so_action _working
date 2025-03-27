@@ -1,0 +1,180 @@
+# -*- coding: utf-8 -*-
+# This module and its content is copyright of Technaureus Info Solutions Pvt. Ltd.
+# - © Technaureus Info Solutions Pvt. Ltd 2025. All rights reserved.
+
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+
+SALE_ORDER_STATE = [
+    ('draft', "Quotation"),
+    ('sent', "Quotation Sent"),
+    ('to_approve', 'To Approve'),
+    ('approved', 'Approved'),
+    ('sale', "Sales Order"),
+    ('cancel', "Cancelled"),
+]
+
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    is_approval = fields.Boolean(compute='compute_is_approval')
+    is_validated = fields.Boolean(compute='compute_is_validated', default=False)
+    hide_approve_button = fields.Boolean(compute='compute_hide_approve_button', default=False)
+    approver_validate_ids = fields.One2many('sale.approval.validate', 'order_id', readonly=True,
+                                            help="Sale Order Approval lines")
+    state = fields.Selection(selection=SALE_ORDER_STATE, string="Status", tracking=3,store=True, default='draft')
+    approved = fields.Boolean(compute='compute_is_fully_approved', default=False)
+    is_approved = fields.Boolean(string="Approved", default=False)
+
+
+    @api.depends('approver_validate_ids')
+    def compute_hide_approve_button(self):
+        """Compute whether to hide the approve button based on the current user's approval status."""
+        for rec in self:
+            if self.env.user.id not in rec.approver_validate_ids.mapped('approver_id').ids:
+                rec.hide_approve_button = True
+            else:
+                approval_line = rec.approver_validate_ids.filtered(lambda l: not l.is_validated)
+                if approval_line and approval_line[0].approver_id.id == self.env.user.id:
+                    rec.hide_approve_button = False
+                else:
+                    rec.hide_approve_button = True
+
+
+
+    def compute_is_fully_approved(self):
+        """Compute whether the sale order is fully approved."""
+        for rec in self:
+            approval_line = rec.approver_validate_ids.filtered(lambda l: not l.is_validated)
+            rec.approved = not bool(approval_line)
+
+    def compute_is_approval(self):
+        """Check whether Sale Order approval is enabled."""
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        is_approval = ICPSudo.get_param('sale_order_approval.approvals')
+        for rec in self:
+            rec.is_approval = bool(is_approval)
+
+    def compute_is_validated(self):
+        """Check if the sale order is validated."""
+        for rec in self:
+            approval_line = rec.approver_validate_ids.filtered(
+                lambda l: l.approver_id.id == self.env.user.id and not l.is_validated
+            )
+            rec.is_validated = bool(approval_line or not rec.approver_validate_ids)
+
+    def send_approval_activity(self,approver):
+        """Create an activity for each approver instead of sending an email."""
+        activity_type = self.env.ref('mail.mail_activity_data_todo')
+
+        for approver in self.approver_validate_ids.mapped('approver_id'):
+            self.env['mail.activity'].create({
+                'res_model_id': self.env.ref('sale.model_sale_order').id,
+                'res_id': self.id,
+                'activity_type_id': activity_type.id,
+                'summary': _('Approval Required for Sale Order: %s') % self.name,
+                'user_id': approver.id,
+                'note': _('Please review and approve the sale order: %s') % self.name,
+            })
+
+    @api.model
+    def create(self, vals):
+        """Override create method to assign approvers and set initial state only for orders requiring approval."""
+
+        if vals.get('state') == 'sale':
+            raise UserError(_("You cannot confirm the sale order while creating it. Approvals are required."))
+
+        res = super(SaleOrder, self).create(vals)
+
+        # Proceed only if order requires approval
+        if res.is_approval:
+            approval = self.env['sale.order.approvals'].search([], order='id desc', limit=1)
+
+            if approval and approval.sale_approver_ids:
+                approval_lines = approval.sale_approver_ids.filtered(lambda a: a.is_required)
+
+                approver_data = [(0, 0, {
+                    'order_id': res.id,
+                    'approver_id': line.approver_id.id,
+                    'is_validated': False
+                }) for line in approval_lines]
+
+                if approver_data:
+                    res.approver_validate_ids = approver_data  # Assign approvers
+
+                    # Notify the first approver via activity
+                    first_approver = approval_lines[0].approver_id
+                    if first_approver:
+                        res.send_approval_activity(approver=first_approver)
+            res.state = 'to_approve'
+
+        return res
+
+    def button_approve(self):
+        """Approve the sale order without checking if the user is an assigned approver."""
+        if not self.order_line:
+            raise UserError('You need to add a product before approving.')
+
+        user = self.env.user
+
+        # Automatically mark all pending approvals as validated
+        self.approver_validate_ids.filtered(lambda a: not a.is_validated).write({'is_validated': True})
+
+        # Mark only the current user's activity as done
+        user_activity = self.env['mail.activity'].search([
+            ('res_model', '=', 'sale.order'),
+            ('res_id', '=', self.id),
+            ('user_id', '=', user.id)  # Only mark current user's activity as done
+        ])
+        user_activity.action_done()
+
+        # Check if all approvers are validated
+        all_validated = not self.approver_validate_ids.filtered(lambda a: not a.is_validated)
+
+        if all_validated:  # Only update state if all approvals are completed
+            self.state = 'approved'
+            self.message_post(body=_('All approvals completed. Order is now in Approved state.'))
+
+        # Update the approval status
+        self.is_approved = True
+
+        # Ensure state changes to approved only if all approvers are validated
+        if all_validated:
+            self.state = 'approved'
+            self.message_post(body=_("Sale Order Approved"))
+
+    def action_confirm(self):
+        """Prevent confirmation if approvals are still pending."""
+        for order in self:
+            if order.is_approval:  # Check if approval is required
+                pending_approvals = order.approver_validate_ids.filtered(lambda a: not a.is_validated)
+                if pending_approvals:
+                    raise UserError("Approvals pending. You cannot confirm the order.")
+
+        # Only confirm if no approvals are pending
+        return super(SaleOrder, self).action_confirm()
+
+
+    def _confirmation_error_message(self):
+        """ Return whether order can be confirmed or not. If not, return an error message. """
+        self.ensure_one()
+        if self.state not in {'draft', 'sent', 'approved'}:
+            return _("Some orders are not in a state requiring confirmation.")
+        if any(
+            not line.display_type
+            and not line.is_downpayment
+            and not line.product_id
+            for line in self.order_line
+        ):
+            return _("A line on these orders is missing a product, you cannot confirm it.")
+
+        return False
+
+
+class SaleApprovalValidate(models.Model):
+    _name = 'sale.approval.validate'
+
+    order_id = fields.Many2one('sale.order', required=True)
+    approver_id = fields.Many2one('res.users', help="User to approve the sale order")
+    is_validated = fields.Boolean(default=False, string='Approved', help="Enabled if the user approved the sale order")
