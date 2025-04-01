@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+     <template id="report_research_project">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page" style="min-height: 100vh; padding-bottom: 60px;">
+                    <t t-if="docs">
+                        <h2>Research Project Report
+                            <t t-if="report_type == 'date_range' and start_date and end_date">
+                                (From <t t-esc="start_date"/> to <t t-esc="end_date"/>)
+                            </t>
+                        </h2>
+                    </t>
+                </div>
+                <!-- Single Table Layout for All Projects -->
+                <div class="page">
+                    <table style="width: 100%; margin-top: 50px; border: 1px solid #000; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Sequence Number</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Project Name</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Start Date</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>End Date</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Duration</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Status</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Project Summary</strong></th>
+                                <th style="padding: 10px; border: 1px solid #000;"><strong>Assigned Researchers</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.sequence_number"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.name"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.formatted_start_date"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.formatted_end_date"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.duration"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.status"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-field="doc.project_summary"/>
+                                    </td>
+                                    <td style="padding: 10px; border: 1px solid #000;">
+                                        <span t-esc="', '.join([researcher.name for researcher in doc.researcher_ids])"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+               <!-- Footer Section -->
+                <div class="footer" style="position: relative; bottom: 0; width: 100%; text-align: center; padding: 10px; border-top: 1px solid #000;">
+                    <p>&amp;copy; 2025 Your Company. All rights reserved.</p>
+                </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
+
+
+<!--  Report Views  -->
+<odoo>
+    <data>
+        <!-- Report Action for PDF -->
+        <record id="action_report_research_project" model="ir.actions.report">
+            <field name="name">Research Project Report</field>
+            <field name="model">research.project</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">research_management.report_research_project</field>
+            <field name="report_file">research_management.report_research_project</field>
+            <field name="binding_model_id" ref="model_research_project"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>
