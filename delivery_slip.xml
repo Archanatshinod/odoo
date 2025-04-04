@@ -1,0 +1,102 @@
+<odoo>
+    <template id="queen_topaz_report_delivery_document" inherit_id="stock.report_delivery_document">
+<!--<xpath expr="//div[@name='div_incoming_address']" position="before">-->
+<!--            <div class="text-center mt-3 mb-3">-->
+<!--                <h1>Delivery Slip</h1>-->
+<!--            </div>-->
+<!--        </xpath>-->
+        <xpath expr="//div[@name='outgoing_warehouse_address']" position="after">
+            <span><strong>GRN No:</strong></span>
+            <span t-field="o.name"/>
+            <div/>
+
+            <span><strong>Date:</strong></span>
+             <div/>
+
+            <span><strong>DO No:</strong></span>
+             <div/>
+
+            <span><strong>Inv No:</strong></span>
+             <div/>
+        </xpath>
+
+         <xpath expr="//div[@class='page']" position="before">
+             <div name="contact_details" class="d-flex w-100 mt-4">
+                 <div class="w-50">
+                     <span><strong>Party VAT Number:</strong></span>
+                     <div/>
+                     <span><strong>Contact Person:</strong></span>
+                     <div/>
+                     <div class="d-flex w-100">
+                         <div class="w-50"><span><strong>Tel:</strong></span><field> </field></div>
+                         <div class="w-50"><span><strong>Fax:</strong></span><field> </field></div>
+                     </div>
+                     <span><strong>Location:</strong></span>
+                     <div/>
+                     <span><strong>Payment Terms:</strong></span>
+                     <div/>
+                     <span><strong>Price Terms:</strong></span>
+                     <div/>
+                     <span><strong>Currency:</strong></span>
+                      <span t-esc="o.purchase_id.currency_id.name"/>
+                     <span class="ms-4" t-esc="o.purchase_id.currency_id.rate" t-options='{"widget": "float", "precision": 10}'/>
+
+
+                     <div/>
+                </div>
+                 <div class="w-50 ps-5 ms-4">
+                     <span><strong>VAT Number:</strong></span>
+                     <div/>
+                     <span><strong>Base Currency:</strong></span>
+                     <span t-esc="o.purchase_id.currency_id.full_name"/>
+                        <div/>
+                      <span><strong>Run Date:</strong></span>
+                        <div/>
+                     <span><strong>PO No:</strong></span>
+                        <div/>
+                     <span><strong>Status:</strong></span>
+                    <div/>
+                 </div>
+             </div>
+            <t t-if="o.project_ids">
+              <t t-set="project" t-value="o.project_ids[0]"/>
+              <t t-set="task" t-value="env['project.task'].search([('project_id', '=', project.id)], limit=1)"/>
+              <t t-if="task.sale_order_id">
+                <div class="mt-3">
+                  <span><strong>Project Jobcode:</strong></span>
+                  <span class="ms-4" t-esc="task.sale_order_id.pr_code"/>
+                  <span class="ms-4" t-esc="task.name"/>
+                </div>
+              </t>
+            </t>
+
+         </xpath>
+<!--        hiding      -->
+         <xpath expr="//h2/span[@t-field='o.name']" position="attributes">
+            <attribute name="style">display: none;</attribute>
+        </xpath>
+        <xpath expr="//div[@name='div_origin']" position="attributes">
+            <attribute name="style">display: none;</attribute>
+        </xpath>
+        <xpath expr="//div[@name='div_sched_date']" position="attributes">
+            <attribute name="style">display: none;</attribute>
+        </xpath>
+     <xpath expr="//div[@name='outgoing_warehouse_address']" position="attributes">
+           <attribute name="style">display: none;</attribute>
+       </xpath>
+
+        <!-- Inherit the table (for not done state) -->
+<!--        <xpath expr="//table[@name='stock_move_table']/thead/tr" position="inside">-->
+<!--          <th><strong></strong></th>-->
+<!--        </xpath>-->
+
+<!--        <xpath expr="//table[@name='stock_move_table']/tbody/tr" position="inside">-->
+<!--          <td>-->
+<!--            <span t-esc="move.product_id.default_code"/> &lt;!&ndash; Example custom field &ndash;&gt;-->
+<!--          </td>-->
+<!--        </xpath>-->
+
+
+
+    </template>
+</odoo>
